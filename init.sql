@@ -62,21 +62,17 @@ CREATE TABLE IF NOT EXISTS analytics.health_data (
     CONSTRAINT fk_indicator
         FOREIGN KEY(indicator_id)
         REFERENCES analytics.indicators(id)
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
+
+    -- Contrainte nommée : permet ON CONFLICT (country_id, indicator_id, year)
+    -- et évite les doublons lors des rechargements
+    CONSTRAINT uniq_health_entry UNIQUE (country_id, indicator_id, year)
 );
 
 -- =========================
 -- INDEXES (performance)
 -- =========================
 
-CREATE INDEX IF NOT EXISTS idx_health_country ON analytics.health_data(country_id);
-CREATE INDEX IF NOT EXISTS idx_health_indicator ON analytics.health_data(indicator_id);
-CREATE INDEX IF NOT EXISTS idx_health_year ON analytics.health_data(year);
-
--- =========================
--- CONSTRAINTS UTILES
--- =========================
-
--- Éviter les doublons (important)
-CREATE UNIQUE INDEX IF NOT EXISTS uniq_health_entry
-ON analytics.health_data(country_id, indicator_id, year);
+CREATE INDEX IF NOT EXISTS idx_health_country    ON analytics.health_data(country_id);
+CREATE INDEX IF NOT EXISTS idx_health_indicator  ON analytics.health_data(indicator_id);
+CREATE INDEX IF NOT EXISTS idx_health_year       ON analytics.health_data(year);
